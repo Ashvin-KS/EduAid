@@ -25,6 +25,7 @@ from apiclient import discovery
 from httplib2 import Http
 from oauth2client import client, file, tools
 from mediawikiapi import MediaWikiAPI
+from request_validation import parse_json_body
 
 app = Flask(__name__)
 CORS(app)
@@ -52,7 +53,10 @@ def process_input_text(input_text, use_mediawiki):
 
 @app.route("/get_mcq", methods=["POST"])
 def get_mcq():
-    data = request.get_json()
+    data, error = parse_json_body(request, required_fields=["input_text"])
+    if error:
+        payload, status = error
+        return jsonify(payload), status
     input_text = data.get("input_text", "")
     use_mediawiki = data.get("use_mediawiki", 0)
     max_questions = data.get("max_questions", 4)
@@ -66,7 +70,10 @@ def get_mcq():
 
 @app.route("/get_boolq", methods=["POST"])
 def get_boolq():
-    data = request.get_json()
+    data, error = parse_json_body(request, required_fields=["input_text"])
+    if error:
+        payload, status = error
+        return jsonify(payload), status
     input_text = data.get("input_text", "")
     use_mediawiki = data.get("use_mediawiki", 0)
     max_questions = data.get("max_questions", 4)
@@ -80,7 +87,10 @@ def get_boolq():
 
 @app.route("/get_shortq", methods=["POST"])
 def get_shortq():
-    data = request.get_json()
+    data, error = parse_json_body(request, required_fields=["input_text"])
+    if error:
+        payload, status = error
+        return jsonify(payload), status
     input_text = data.get("input_text", "")
     use_mediawiki = data.get("use_mediawiki", 0)
     max_questions = data.get("max_questions", 4)
@@ -94,7 +104,10 @@ def get_shortq():
 
 @app.route("/get_problems", methods=["POST"])
 def get_problems():
-    data = request.get_json()
+    data, error = parse_json_body(request, required_fields=["input_text"])
+    if error:
+        payload, status = error
+        return jsonify(payload), status
     input_text = data.get("input_text", "")
     use_mediawiki = data.get("use_mediawiki", 0)
     max_questions_mcq = data.get("max_questions_mcq", 4)
@@ -116,7 +129,13 @@ def get_problems():
 
 @app.route("/get_mcq_answer", methods=["POST"])
 def get_mcq_answer():
-    data = request.get_json()
+    data, error = parse_json_body(
+        request,
+        required_fields=["input_text", "input_question", "input_options"],
+    )
+    if error:
+        payload, status = error
+        return jsonify(payload), status
     input_text = data.get("input_text", "")
     input_questions = data.get("input_question", [])
     input_options = data.get("input_options", [])
@@ -149,7 +168,10 @@ def get_mcq_answer():
 
 @app.route("/get_shortq_answer", methods=["POST"])
 def get_answer():
-    data = request.get_json()
+    data, error = parse_json_body(request, required_fields=["input_text", "input_question"])
+    if error:
+        payload, status = error
+        return jsonify(payload), status
     input_text = data.get("input_text", "")
     input_questions = data.get("input_question", [])
     answers = []
@@ -162,7 +184,10 @@ def get_answer():
 
 @app.route("/get_boolean_answer", methods=["POST"])
 def get_boolean_answer():
-    data = request.get_json()
+    data, error = parse_json_body(request, required_fields=["input_text", "input_question"])
+    if error:
+        payload, status = error
+        return jsonify(payload), status
     input_text = data.get("input_text", "")
     input_questions = data.get("input_question", [])
     output = []
