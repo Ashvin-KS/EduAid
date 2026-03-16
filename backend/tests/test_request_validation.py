@@ -2,7 +2,10 @@ import unittest
 
 from flask import Flask, jsonify, request
 
-from request_validation import parse_json_body
+try:
+    from request_validation import parse_json_body
+except ImportError:
+    from backend.request_validation import parse_json_body
 
 
 class ParseJsonBodyTests(unittest.TestCase):

@@ -25,7 +25,10 @@ from apiclient import discovery
 from httplib2 import Http
 from oauth2client import client, file, tools
 from mediawikiapi import MediaWikiAPI
-from request_validation import parse_json_body
+try:
+    from request_validation import parse_json_body
+except ImportError:
+    from backend.request_validation import parse_json_body
 
 app = Flask(__name__)
 CORS(app)
